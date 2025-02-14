@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="Web Development, HTML, CSS, PHP">
     <meta name="author" content="IT-23 Grupp">
-    <title>Harjutus</title>
-</head>
+    <title>Harjutus 1-3</title>
 <body>
     <h1>Ülesanne 1</h1>
     <?php
