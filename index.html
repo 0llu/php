@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hserman GitHub</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon-32x32.png"> <!-- Eeldatakse, et favicon.png asub repositooriumis -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
     <header class="bg-blue-600 text-white py-6 shadow-lg">
@@ -18,22 +20,9 @@
         <section id="repo-info" class="bg-white p-6 shadow rounded mb-8">
             <h2 class="text-2xl font-bold mb-4">Repositooriumi info</h2>
             <div id="repo-details" class="text-gray-700">
-                <?php
-                $username = '0llu'; // GitHubi kasutajanimi
-                $repoName = 'php'; // Repositooriumi nimi (nüüd "php")
-
-                // Fetch repositooriumi info
-                $repoInfoUrl = "https://api.github.com/repos/{$username}/{$repoName}";
-                $repoInfo = json_decode(file_get_contents($repoInfoUrl), true);
-
-                if ($repoInfo && isset($repoInfo['name'])) {
-                    echo '<p class="mb-2"><strong>Nimi:</strong> ' . htmlspecialchars($repoInfo['name']) . '</p>';
-                    echo '<p class="mb-2"><strong>Kirjeldus:</strong> ' . htmlspecialchars($repoInfo['description'] ?? 'PHP ülesanded') . '</p>';
-                    echo '<p class="mb-2"><strong>Viimane uuendus:</strong> ' . date('d.m.Y H:i', strtotime($repoInfo['updated_at'])) . '</p>';
-                } else {
-                    echo '<p class="text-red-500">Repositooriumi andmeid ei leitud. Kontrolli kasutajanime ja repositooriumi nime.</p>';
-                }
-                ?>
+                <p class="mb-2"><strong>Nimi:</strong> <span id="repo-name"></span></p>
+                <p class="mb-2"><strong>Kirjeldus:</strong> <span id="repo-description"></span></p>
+                <p class="mb-2"><strong>Viimane uuendus:</strong> <span id="repo-updated"></span></p>
             </div>
         </section>
 
@@ -44,25 +33,7 @@
                 <div>
                     <h3 class="text-xl font-semibold mb-2">PHP failid</h3>
                     <ul id="php-files" class="space-y-2">
-                        <?php
-                        // Fetch repositooriumi failid
-                        $repoFilesUrl = "https://api.github.com/repos/{$username}/{$repoName}/contents";
-                        $repoFiles = json_decode(file_get_contents($repoFilesUrl), true);
-
-                        if ($repoFiles && is_array($repoFiles)) {
-                            foreach ($repoFiles as $file) {
-                                if (isset($file['name']) && pathinfo($file['name'], PATHINFO_EXTENSION) === 'php') {
-                                    echo '<li class="bg-gray-100 p-4 rounded shadow-sm hover:shadow-md transition-shadow">';
-                                    echo '<a href="' . htmlspecialchars($file['download_url'] ?? $file['html_url']) . '" target="_blank" class="text-blue-500 hover:underline font-medium">';
-                                    echo htmlspecialchars($file['name']);
-                                    echo '</a>';
-                                    echo '</li>';
-                                }
-                            }
-                        } else {
-                            echo '<li class="text-red-500">Repositooriumi faile ei leitud.</li>';
-                        }
-                        ?>
+                        <!-- PHP failid kuvatakse siia -->
                     </ul>
                 </div>
             </div>
@@ -74,5 +45,61 @@
             <p>&copy; 2025 Hserman GitHub. Kõik õigused kaitstud.</p>
         </div>
     </footer>
+
+    <script>
+        const username = '0llu'; // GitHubi kasutajanimi
+        const repoName = 'php';  // Repositooriumi nimi (nüüd "php")
+
+        // Fetch repositooriumi info
+        async function fetchRepoInfo() {
+            try {
+                const response = await axios.get(`https://api.github.com/repos/${username}/${repoName}`);
+                const repoData = response.data;
+
+                document.getElementById('repo-name').textContent = repoData.name;
+                document.getElementById('repo-description').textContent = repoData.description || 'PHP ülesanded';
+                document.getElementById('repo-updated').textContent = new Date(repoData.updated_at).toLocaleString('et-EE');
+            } catch (error) {
+                console.error('Error fetching repo info:', error);
+                alert('Repositooriumi andmeid ei leitud. Kontrolli kasutajanime ja repositooriumi nime.');
+            }
+        }
+
+        // Fetch repositooriumi failid ja kuvab ainult PHP failid
+        async function fetchRepoFiles() {
+            try {
+                const response = await axios.get(`https://api.github.com/repos/${username}/${repoName}/contents`);
+                const files = response.data;
+
+                const phpList = document.getElementById('php-files');
+                phpList.innerHTML = ''; // Tühjenda loend enne uute failide lisamist
+
+                // Filtreeri ja kuvab ainult .php failid
+                files
+                    .filter(file => file.name.endsWith('.php')) // Filtreeri PHP failid
+                    .sort((a, b) => a.name.localeCompare(b.name)) // Sorteeri failid nime järgi
+                    .forEach(file => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('bg-gray-100', 'p-4', 'rounded', 'shadow-sm', 'hover:shadow-md', 'transition-shadow');
+
+                        const fileLink = document.createElement('a');
+                        fileLink.href = file.download_url ? file.download_url : file.html_url; // Faili link
+                        fileLink.textContent = file.name; // Faili nimi
+                        fileLink.target = '_blank'; // Ava link uues vahekaardis
+                        fileLink.classList.add('text-blue-500', 'hover:underline', 'font-medium');
+
+                        listItem.appendChild(fileLink);
+                        phpList.appendChild(listItem);
+                    });
+            } catch (error) {
+                console.error('Error fetching repo files:', error);
+                alert('Repositooriumi faile ei leitud. Kontrolli kasutajanime ja repositooriumi nime.');
+            }
+        }
+
+        // Käivita funktsioonid lehe laadimisel
+        fetchRepoInfo();
+        fetchRepoFiles();
+    </script>
 </body>
 </html>
