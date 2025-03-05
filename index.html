@@ -76,7 +76,7 @@
 
                 // Filtreeri ja kuvab ainult .php failid
                 files
-                    .filter(file => file.name.endsWith('.php')) // Filtreeri PHP failid
+                    .filter(file => file.name.endsWith('php')) // Filtreeri PHP failid
                     .sort((a, b) => a.name.localeCompare(b.name)) // Sorteeri failid nime järgi
                     .forEach(file => {
                         const listItem = document.createElement('li');
