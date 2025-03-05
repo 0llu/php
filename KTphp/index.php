@@ -8,23 +8,36 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         .navbar {
-            background-color: #f8f9fa; 
+            background-color: #e9ecef;
         }
         .navbar-brand {
-            margin-left: 20px; 
+            margin-left: 20px;
+            color: #000;
         }
         .navbar-nav {
             margin-right: 20px;
         }
+        .navbar-nav .nav-link {
+            color: #000;
+            margin-right: 20px; 
+        }
+        .navbar-nav .nav-item:last-child .nav-link {
+            margin-right: 0;
+        }
+        .bi-bag {
+            color: #000;
+        }
+
         .banner-container {
             display: flex;
             justify-content: space-between;
             margin-top: 20px;
+            margin-bottom: 20px;
         }
         .banner {
             position: relative;
-            width: 48%;
-            height: 400px;
+            width: 49%;
+            height: 333px;
             overflow: hidden;
         }
         .banner img {
@@ -40,11 +53,17 @@
             color: white;
         }
         .banner-text h2 {
-            font-size: 24px;
+            font-size: 35px;
             font-weight: bold;
+            margin-bottom: 10px;
         }
-        .banner-text p {
-            font-size: 16px;
+        .banner-text p.alampealkiri {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .banner-text p.lisainfo {
+            font-size: 15px;
             font-weight: bold;
         }
         .banner-text button {
@@ -54,14 +73,61 @@
             padding: 10px 20px;
             margin-top: 10px;
         }
+
         footer {
             background-color: #f8f9fa;
-            padding: 20px 0;
+            padding: 60px 0;
+            margin-top: 20px;
         }
         footer p {
             margin: 0;
             text-align: left;
             margin-left: 20px;
+        }
+
+        .product-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 10px;
+            height: 400px;
+        }
+        .product-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+        .product-card .card-body {
+            padding: 0;
+            text-align: left;
+        }
+        .product-card h5 {
+            font-size: 1.25rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .product-card p {
+            font-size: 1rem;
+            color: #00bfff;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        .parimad-pakkumised {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .navbar .container-fluid, footer .container {
+            max-width: 1400px;
+            margin: 0 auto; 
+            padding: 0 20px;
         }
     </style>
 </head>
@@ -94,22 +160,63 @@
         </div>
     </nav>
 
+    <?php
+    $bannerid = [
+        [
+            'pilt' => 'img/pilt1.jpg',
+            'pealkiri' => 'parim pakkumine',
+            'alampealkiri' => 'osta 1 saad 1',
+            'lisainfo' => 'The best classic dress is on sale at coro'
+        ],
+        [
+            'pilt' => 'img/pilt2.jpg',
+            'pealkiri' => 'kevad/suvi',
+            'alampealkiri' => 'kõik rohelised',
+            'lisainfo' => '20% soodsamalt'
+        ],
+        [
+            'pilt' => 'img/pilt3.jpg',
+            'pealkiri' => 'suur allahindlus',
+            'alampealkiri' => 'kuni 50% alla',
+            'lisainfo' => 'Ainult täna!'
+        ],
+        [
+            'pilt' => 'img/pilt4.jpg',
+            'pealkiri' => 'uus kollektsioon',
+            'alampealkiri' => 'vaata uusimaid tooteid',
+            'lisainfo' => 'Tule ja inspireeru!'
+        ],
+        [
+            'pilt' => 'img/pilt5.jpg',
+            'pealkiri' => 'eripakkumine',
+            'alampealkiri' => 'eriline valik',
+            'lisainfo' => 'Ainult valitud tooted!'
+        ]
+    ];
+
+    $banner1 = $bannerid[array_rand($bannerid)];
+    $banner2 = $bannerid[array_rand($bannerid)];
+    while ($banner1 === $banner2) {
+        $banner2 = $bannerid[array_rand($bannerid)];
+    }
+    ?>
+
     <div class="container banner-container">
         <div class="banner">
-            <img src="img/pilt1.jpg" alt="Banner 1">
+            <img src="<?php echo $banner1['pilt']; ?>" alt="Banner 1">
             <div class="banner-text">
-                <h2>parim pakkumine</h2>
-                <p>osta 1 saad 1</p>
-                <p>The best classic dress is on sale at coro</p>
+                <p class="alampealkiri"><?php echo $banner1['pealkiri']; ?></p>
+                <h2><?php echo $banner1['alampealkiri']; ?></h2>
+                <p class="lisainfo"><?php echo $banner1['lisainfo']; ?></p>
                 <button>Vaata lähemalt</button>
             </div>
         </div>
         <div class="banner">
-            <img src="img/pilt2.jpg" alt="Banner 2">
+            <img src="<?php echo $banner2['pilt']; ?>" alt="Banner 2">
             <div class="banner-text">
-                <h2>kevad7suvi</h2>
-                <p>kõik rohelised</p>
-                <p>20% soodsamalt</p>
+                <p class="alampealkiri"><?php echo $banner2['pealkiri']; ?></p>
+                <h2><?php echo $banner2['alampealkiri']; ?></h2>
+                <p class="lisainfo"><?php echo $banner2['lisainfo']; ?></p>
                 <button>Tutvu lähemalt</button>
             </div>
         </div>
@@ -129,19 +236,19 @@
         ?>
         <div class="container">
             <div class="row text-center mt-5 mb-5">
-                <h2 class="fw-bold">Parimad pakkumised</h2>
+                <h2 class="parimad-pakkumised">Parimad pakkumised</h2>
             </div>
-            <div class="row">
+            <div class="row row-cols-1 row-cols-md-4 g-4">
                 <?php
                 if ($csv = fopen("tooted.csv", "r")) {
                     fgetcsv($csv);
                     while ($andmed = fgetcsv($csv)) {
                         echo "
-                        <div class='col-md-4 mb-4'>
-                            <div class='card'>
+                        <div class='col'>
+                            <div class='product-card'>
                                 <img src='{$andmed[0]}' class='card-img-top' alt='{$andmed[1]}'>
                                 <div class='card-body'>
-                                    <h5 class='card-title fw-bold'>{$andmed[1]}</h5>
+                                    <h5 class='card-title'>{$andmed[1]}</h5>
                                     <p class='card-text'>{$andmed[2]}€</p>
                                 </div>
                             </div>

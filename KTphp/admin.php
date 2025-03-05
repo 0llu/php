@@ -45,8 +45,8 @@ if (!isset($_SESSION['admin'])) {
                 <input type="number" name="toote_hind" class="form-control" required>
             </div>
             <div class="mb-3">
-                <label class="form-label fw-bold">Toote pilt (PNG):</label>
-                <input type="file" name="toote_pilt" class="form-control" accept=".png" required>
+                <label class="form-label fw-bold">Toote pilt:</label>
+                <input type="file" name="toote_pilt" class="form-control" accept=".png, .jpg, .jpeg" required>
             </div>
             <button type="submit" name="lisa" class="btn btn-success w-100">Lisa toode</button>
         </form>
@@ -77,6 +77,20 @@ if (!isset($_SESSION['admin'])) {
                     fclose($csv);
                 }
             }
+            
+            if (isset($_POST['lisa'])) {
+                $toote_nimi = $_POST['toote_nimi'];
+                $toote_hind = $_POST['toote_hind'];
+                $pilt = $_FILES['toote_pilt'];
+                $asukoht = "img/";
+                $pildi_nimi = $asukoht . basename($pilt['name']);
+            
+                if (move_uploaded_file($pilt['tmp_name'], $pildi_nimi)) {
+                    $tooted = andmed();
+                    $tooted[] = [$pildi_nimi, $toote_nimi, $toote_hind];
+                    salvesta($tooted);
+                }
+            }            
 
             if (isset($_GET['kustuta'])) {
                 $kustuta = $_GET['kustuta'];
@@ -94,12 +108,14 @@ if (!isset($_SESSION['admin'])) {
                 $asukoht = "img/";
                 $pildi_nimi = $asukoht . basename($pilt['name']);
                 if (move_uploaded_file($pilt['tmp_name'], $pildi_nimi)) {
-                    $tooted = andmed();
-                    $tooted[] = [$pildi_nimi, $toote_nimi, $toote_hind];
-                    salvesta($tooted);
-                } else {
-                    echo "<div class='alert alert-danger'>Pildi üleslaadimine ebaõnnestus.</div>";
-                }
+                    $csv = fopen("tooted.csv", "a");
+                    if ($csv !== false) {
+                        fputcsv($csv, [$pildi_nimi, $toote_nimi, $toote_hind]);
+                        fclose($csv);
+                    } else {
+                        echo "<div class='alert alert-danger'>CSV faili avamine ebaõnnestus.</div>";
+                    }
+                } 
             }
 
             $tooted = andmed();
